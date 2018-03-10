@@ -73,18 +73,3 @@ vector<string> WordList::findCandidates(string cipherWord, string currTranslatio
 {
 	return m_impl->findCandidates(cipherWord, currTranslation);
 }
-
-unsigned int hash(const std::string& s)
-{
-	return
-		std::hash<std::string>()(s);
-}
-unsigned int hash(const int& i)
-{
-	return std::hash<int>()(i);
-}
-
-unsigned int hash(const	char& c)
-{
-	return std::hash<char>()(c);
-}

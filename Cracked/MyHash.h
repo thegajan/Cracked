@@ -7,25 +7,25 @@ template<typename KeyType, typename ValueType>
 class MyHash
 {
 public:
-    MyHash(double maxLoadFactor = 0.5);
-    ~MyHash();
-    void reset();
-    void associate(const KeyType& key, const ValueType& value);
-    int getNumItems() const;
-    double getLoadFactor() const;
+	MyHash(double maxLoadFactor = 0.5);
+	~MyHash();
+	void reset();
+	void associate(const KeyType& key, const ValueType& value);
+	int getNumItems() const;
+	double getLoadFactor() const;
 
-      // for a map that can't be modified, return a pointer to const ValueType
-    const ValueType* find(const KeyType& key) const;
+	// for a map that can't be modified, return a pointer to const ValueType
+	const ValueType* find(const KeyType& key) const;
 
-      // for a modifiable map, return a pointer to modifiable ValueType
-    ValueType* find(const KeyType& key)
-    {
-        return const_cast<ValueType*>(const_cast<const MyHash*>(this)->find(key));
-    }
+	// for a modifiable map, return a pointer to modifiable ValueType
+	ValueType* find(const KeyType& key)
+	{
+		return const_cast<ValueType*>(const_cast<const MyHash*>(this)->find(key));
+	}
 
-      // C++11 syntax for preventing copying and assignment
-    MyHash(const MyHash&) = delete;
-    MyHash& operator=(const MyHash&) = delete;
+	// C++11 syntax for preventing copying and assignment
+	MyHash(const MyHash&) = delete;
+	MyHash& operator=(const MyHash&) = delete;
 
 private:
 	struct Node {
@@ -123,6 +123,7 @@ double MyHash<KeyType, ValueType>::getLoadFactor() const {
 //MyHash find
 template<typename KeyType, typename ValueType>
 const ValueType* MyHash<KeyType, ValueType>::find(const KeyType& key) const {
+	unsigned int hash(const KeyType& k);
 	int hashSpot = hash(key) % m_size;
 	Node* p = m_hash[hashSpot];
 	if (p->key == key)
@@ -141,7 +142,7 @@ template<typename KeyType, typename ValueType>
 void MyHash<KeyType, ValueType>::newHashTable() {
 	m_size = m_size * 2;
 	Node* newHash = new Node*[m_size];
-	for (int i = 0; i < m_size/2; i++) {
+	for (int i = 0; i < m_size / 2; i++) {
 		Node* p = m_hash[i];
 		while (p != nullptr) {
 			insert(newHash, p);
@@ -155,6 +156,7 @@ void MyHash<KeyType, ValueType>::newHashTable() {
 //MyHash insert
 template<typename KeyType, typename ValueType>
 void MyHash<KeyType, ValueType>::insert(Node* hashTable, Node* newNode) {
+	unsigned int hash(const KeyType& k);
 	int hashSpot = hash(newNode->key) % m_size;
 	if (hashTable[hashSpot] == nullptr)
 		hashTable[hashSpot] = newNode;
