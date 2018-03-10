@@ -115,6 +115,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Decrypter.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Tokenizer.cpp" />
+    <ClCompile Include="Translator.cpp" />
+    <ClCompile Include="WordList.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="wordlist.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MyHash.h" />
+    <ClInclude Include="provided.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
