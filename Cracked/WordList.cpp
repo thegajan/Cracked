@@ -13,10 +13,19 @@ public:
 	bool contains(string word) const;
 	vector<string> findCandidates(string cipherWord, string currTranslation) const;
 private:
+	string lower(const string& s) const;
 	bool validWord(const string& s) const;
+	bool validTranslation(const string& translation, const string& word) const;
 	string wordPattern(const string& word) const;
 	MyHash<string, vector<string>> m_table;
 };
+
+string WordListImpl::lower(const string& s) const {
+	int length = s.length();
+	string word = s;
+	for (int i = 0; i < length; i++) word[i] = tolower(word[i]);
+	return word;
+}
 
 string WordListImpl::wordPattern(const string& word) const{
 	string s = word;
@@ -32,6 +41,23 @@ bool WordListImpl::validWord(const string& s) const {
 	int length = s.length();
 	for (int i = 0; i < length; i++) {
 		if (!isalpha(s[i]) && s[i] != '\'')
+			return false;
+	}
+	return true;
+}
+
+bool WordListImpl::validTranslation(const string& translation, const string& word) const {
+	int length = translation.length();
+	if (length != word.length())
+		return false;
+	for (int i = 0; i < length; i++) {
+		if (!isalpha(translation[i]) && translation[i] != '\'' && translation[i] != '?')
+			return false;
+		else if (isalpha(translation[i]) && !isalpha(word[i]))
+			return false;
+		else if (translation[i] == '?' && !isalpha(word[i]))
+			return false;
+		else if (translation[i] == '\'' && word[i] != '\'')
 			return false;
 	}
 	return true;
@@ -64,18 +90,38 @@ bool WordListImpl::loadWordList(string filename) //O(W)
 
 bool WordListImpl::contains(string word) const //O(1)
 {
-	int length = word.length();
-	for (int i = 0; i < length; i++) word[i] = tolower(word[i]);
-	const vector<string>* p = m_table.find(wordPattern(word));
+	const vector<string>* p = m_table.find(wordPattern(lower(word)));
 	for(int j = 0; j < p->size(); j++)
 		if ((*p)[j] == word)
 			return true;
 	return true;
 }
 
-vector<string> WordListImpl::findCandidates(string cipherWord, string currTranslation) const
+vector<string> WordListImpl::findCandidates(string cipherWord, string currTranslation) const //O(Q)
 {
-	return vector<string>();  // This compiles, but may not be correct
+	if (!validWord(cipherWord) || !validTranslation(currTranslation, cipherWord))
+		return vector<string>();
+
+	string cipherPattern = wordPattern(cipherWord);
+	const vector<string>* possibleCipher = m_table.find(cipherPattern);
+
+	vector<string> specificCipher;
+
+	for (int i = 0; i < possibleCipher->size(); i++) {
+		string possWord_O = (*possibleCipher)[i];
+		string possWord = lower((*possibleCipher)[i]);
+		bool valid = true;
+		for (int j = 0; j < possWord.length(); j++) {
+			if (isalpha(currTranslation[j]) && possWord[j] != currTranslation[j])
+				valid = false;
+			else if (currTranslation[j] == '?' && !isalpha(possWord[j]))
+				valid = false;
+			else if (currTranslation[j] == '\'' && possWord[j] != '\'')
+				valid = false;
+		}
+		if (valid)
+			specificCipher.push_back(possWord_O);
+	}
 }
 
 //***** hash functions for string, int, and char *****
