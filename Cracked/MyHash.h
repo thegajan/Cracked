@@ -29,21 +29,16 @@ public:
 
 private:
 	struct Node {
-		Node(KeyType key, ValueType value) {
-			m_key = key;
-			m_value = value;
-		}
 		KeyType m_key;
 		ValueType m_value;
 		Node* m_next = nullptr;
 	};
 
-
+	int bucketNumber(const KeyType& key) const;
 	void newHashTable();
-	void deleteHash();
-	void insert(Node* hashTable, Node* newNode);
+	void deleteHash(Node** hash, int size);
 
-	Node* m_hash = nullptr;
+	Node** m_hash = nullptr;
 	double m_maxLoadFactor;
 	int m_size;
 	int m_numHash = 0;
@@ -51,11 +46,11 @@ private:
 
 //implementaitons of myhash member funcitons
 
-//MyHash Constructor
+//MyHash Constructor O(B)
 template<typename KeyType, typename ValueType>
-MyHash<KeyType, ValueType>::MyHash(double maxLoadFactor = 0.5) {
+MyHash<KeyType, ValueType>::MyHash(double maxLoadFactor) {
 	m_size = 100;
-	m_hash = new Node*[m_size];
+	m_hash = new Node*[m_size]();
 	if (maxLoadFactor <= 0)
 		m_maxLoadFactor = 0.5;
 	else if (maxLoadFactor > 2.0)
@@ -64,105 +59,107 @@ MyHash<KeyType, ValueType>::MyHash(double maxLoadFactor = 0.5) {
 		m_maxLoadFactor = maxLoadFactor;
 }
 
-//MyHash destructor
+//MyHash destructor O(B)
 template<typename KeyType, typename ValueType>
 MyHash<KeyType, ValueType>::~MyHash() {
-	deleteHash();
+	deleteHash(m_hash, m_size);
 }
 
-//MyHash reset function
+//delete the hash table
+template<typename KeyType, typename ValueType>
+void MyHash<KeyType, ValueType>::deleteHash(Node** hash, int size) {
+	for (int i = 0; i < size; i++) {
+		Node* p = hash[i];
+		while (p != nullptr)
+		{
+			Node* k = p;
+			p = p->m_next;
+			delete k;
+		}
+	}
+	delete[] hash;
+}
+
+//MyHash reset function O(B)
 template<typename KeyType, typename ValueType>
 void MyHash<KeyType, ValueType>::reset() {
-	deleteHash();
-	m_hash = new Node*[m_size];
+	deleteHash(m_hash, m_size);
+	m_numHash = 0;
+	m_hash = new Node*[m_size]();
 }
 
-//MyHash associate function
+//MyHash associate function O(1) or O(B)
 template<typename KeyType, typename ValueType>
 void MyHash<KeyType, ValueType>::associate(const KeyType& key, const ValueType& value) {
 	ValueType* v = find(key);
 	if (v == nullptr) {
 		m_numHash++;
-		if ((m_numHash) / m_size > m_maxLoadFactor)
+		Node* p = new Node{ key, value };
+		int hashSpot = bucketNumber(key);
+		if (m_hash[hashSpot] == nullptr)
+			m_hash[hashSpot] = p;
+		else {
+			Node* c = m_hash[hashSpot];
+			p->m_next = c;
+			m_hash[hashSpot] = p;
+		}
+		if (1.0*m_numHash / m_size > m_maxLoadFactor)
 			newHashTable();
-		Node* p = new Node(key, value);
-		insert(m_hash, p);
 	}
 	else {
 		*v = value;
 	}
 }
 
-//delete the hash table
+//MyHash newHashTable
 template<typename KeyType, typename ValueType>
-void MyHash<KeyType, ValueType>::deleteHash() {
-	for (int i = 0; i < m_size; i++) {
-		Node* p = m_hash[i];
-		while (p != nullptr)
-		{
-			Node* k = p;
-			p = p->next();
-			delete k;
+void MyHash<KeyType, ValueType>::newHashTable() {
+	Node** temp = m_hash;
+	int tempSize = m_size;
+
+	m_size = m_size * 2;
+	m_hash = new Node*[m_size]();
+	m_numHash = 0;
+
+	for (int i = 0; i < tempSize; i++) {
+		Node* p = temp[i];
+		while (p != nullptr) {
+			associate(p->m_key, p->m_value);
+			p = p->m_next;
 		}
 	}
-	delete m_hash;
+
+	deleteHash(temp, tempSize);
 }
 
-//MyHash getNumItems
+//MyHash find O(1) or O(X)
+template<typename KeyType, typename ValueType>
+const ValueType* MyHash<KeyType, ValueType>::find(const KeyType& key) const {
+	int hashSpot = bucketNumber(key);
+	Node* p = m_hash[hashSpot];
+	while (p != nullptr) {
+		if (p->m_key == key)
+			return &(p->m_value);
+		p = p->m_next;
+	}
+	return nullptr;
+}
+
+//MyHash getNumItems O(1)
 template<typename KeyType, typename ValueType>
 int MyHash<KeyType, ValueType>::getNumItems() const {
 	return m_numHash;
 }
 
-//MyHash getLoadFactor
+//MyHash getLoadFactor O(1)
 template<typename KeyType, typename ValueType>
 double MyHash<KeyType, ValueType>::getLoadFactor() const {
 	return m_maxLoadFactor;
 }
 
-//MyHash find
+//MyHash bucket number
 template<typename KeyType, typename ValueType>
-const ValueType* MyHash<KeyType, ValueType>::find(const KeyType& key) const {
+int MyHash<KeyType, ValueType>::bucketNumber(const KeyType& key) const {
 	unsigned int hash(const KeyType& k);
-	int hashSpot = hash(key) % m_size;
-	Node* p = m_hash[hashSpot];
-	if (p->key == key)
-		return *(p->value);
-	else
-		while (p != nullptr) {
-			if (p->key == key)
-				return *(p->value);
-			p = p->next();
-		}
-	return nullptr;
-}
-
-//MyHash newHashTable
-template<typename KeyType, typename ValueType>
-void MyHash<KeyType, ValueType>::newHashTable() {
-	m_size = m_size * 2;
-	Node* newHash = new Node*[m_size];
-	for (int i = 0; i < m_size / 2; i++) {
-		Node* p = m_hash[i];
-		while (p != nullptr) {
-			insert(newHash, p);
-			p = p->next;
-		}
-	}
-	deleteHash();
-	m_hash = newHash;
-}
-
-//MyHash insert
-template<typename KeyType, typename ValueType>
-void MyHash<KeyType, ValueType>::insert(Node* hashTable, Node* newNode) {
-	unsigned int hash(const KeyType& k);
-	int hashSpot = hash(newNode->key) % m_size;
-	if (hashTable[hashSpot] == nullptr)
-		hashTable[hashSpot] = newNode;
-	else {
-		Node* c = hashTable[hashSpot];
-		newNode->next = c;
-		hashTable[hashSpot] = newNode;
-	}
+	return hash(key) % m_size;
 }
