@@ -1,8 +1,8 @@
 #include "provided.h"
 #include <string>
 #include <vector>
-//#include "MyHash.h"
 #include <fstream>
+#include "MyHash.h"
 using namespace std;
 
 class WordListImpl
@@ -13,12 +13,22 @@ public:
 	bool contains(string word) const;
 	vector<string> findCandidates(string cipherWord, string currTranslation) const;
 private:
-	//MyHash<int, string> m_table;
+	bool validWord(string s) const;
+	MyHash<string, string> m_table;
 };
 
-bool WordListImpl::loadWordList(string filename)
+bool WordListImpl::validWord(string s) const{
+	int length = s.length();
+	for (int i = 0; i < length; i++) {
+		if (!isalpha(s[i]) && s[i] != '\'')
+			return false;
+	}
+	return true;
+}
+
+bool WordListImpl::loadWordList(string filename) //O(W)
 {
-	//m_table.reset();
+	m_table.reset();
 	ifstream file("wordlist.txt");
 	string word;
 	int i = 0;
@@ -26,19 +36,22 @@ bool WordListImpl::loadWordList(string filename)
 		return false;
 	}
 	while (getline(file, word)) {
-		//If a line of the word list file
-		//	contains a character
-		//	that is not a letter or an apostrophe,
-		//	ignore that line; otherwise, that line is to be considered one of the words in the word list
-		//m_table.associate(i, word);
-		i++;
+		if (validWord(word)) {
+			m_table.associate(word, word);
+			//i++;
+		}
 	}
 	return true;
 }
 
 bool WordListImpl::contains(string word) const
 {
-	return false; // This compiles, but may not be correct
+	int length = word.length();
+	for (int i = 0; i < length; i++) word[i] = tolower(word[i]);
+	const string* p = m_table.find(word);
+	if (p != nullptr)
+		return true;
+	return true;
 }
 
 vector<string> WordListImpl::findCandidates(string cipherWord, string currTranslation) const
