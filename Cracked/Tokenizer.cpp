@@ -9,15 +9,34 @@ public:
     TokenizerImpl(string separators);
     vector<string> tokenize(const std::string& s) const;
 private:
+	vector<char> m_seperate;
 };
 
 TokenizerImpl::TokenizerImpl(string separators)
 {
+	for (int i = 0; i < separators.size(); i++) {
+		m_seperate.push_back(separators[i]);
+	}
 }
 
 vector<string> TokenizerImpl::tokenize(const std::string& s) const
 {
-    return vector<string>();  // This compiles, but may not be correct
+	vector<string> tokenize;
+	string temp;
+	for (int i = 0; i < s.size(); i++) {
+		bool isPunt = false;
+		for (int j = 0; j < m_seperate.size(); j++) {
+			if (s[i] == m_seperate[j])
+				isPunt = true;
+		}
+		if (isPunt)
+			temp = temp + s[i];
+		else {
+			tokenize.push_back(temp);
+			temp = "";
+		}
+	}
+	return tokenize;
 }
 
 //******************** Tokenizer functions ************************************
