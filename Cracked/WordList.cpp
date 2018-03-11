@@ -3,21 +3,32 @@
 #include <vector>
 #include <fstream>
 #include "MyHash.h"
+#include <algorithm>
 using namespace std;
 
 class WordListImpl
 {
 public:
-	WordListImpl() {}
 	bool loadWordList(string filename);
 	bool contains(string word) const;
 	vector<string> findCandidates(string cipherWord, string currTranslation) const;
 private:
-	bool validWord(string s) const;
-	MyHash<string, string> m_table;
+	bool validWord(const string& s) const;
+	string wordPattern(const string& word) const;
+	MyHash<string, vector<string>> m_table;
 };
 
-bool WordListImpl::validWord(string s) const{
+string WordListImpl::wordPattern(const string& word) const{
+	string s = word;
+	for (int i = 0; i < s.size(); i++) {
+		char rep = 'A';
+		replace(s.begin(), s.end(), s[i], rep);
+		rep++;
+	}
+	return s;
+}
+
+bool WordListImpl::validWord(const string& s) const {
 	int length = s.length();
 	for (int i = 0; i < length; i++) {
 		if (!isalpha(s[i]) && s[i] != '\'')
@@ -37,20 +48,28 @@ bool WordListImpl::loadWordList(string filename) //O(W)
 	}
 	while (getline(file, word)) {
 		if (validWord(word)) {
-			m_table.associate(word, word);
+			string codedWord = wordPattern(word);
+			vector<string>* codedWords = m_table.find(codedWord);
+			if (codedWords == nullptr)
+				m_table.associate(codedWord, vector<string>{word});
+			else {
+				codedWords->push_back(word);
+				m_table.associate(codedWord, *codedWords);
+			}
 			//i++;
 		}
 	}
 	return true;
 }
 
-bool WordListImpl::contains(string word) const
+bool WordListImpl::contains(string word) const //O(1)
 {
 	int length = word.length();
 	for (int i = 0; i < length; i++) word[i] = tolower(word[i]);
-	const string* p = m_table.find(word);
-	if (p != nullptr)
-		return true;
+	const vector<string>* p = m_table.find(wordPattern(word));
+	for(int j = 0; j < p->size(); j++)
+		if ((*p)[j] == word)
+			return true;
 	return true;
 }
 

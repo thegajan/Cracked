@@ -1,2 +1,4 @@
 ﻿  WordList.cpp
+c:\gajan\school\ucla\freshman\winter\cs32\projects\cracked\cracked\wordlist.cpp(23): warning C4018: '<': signed/unsigned mismatch
+c:\gajan\school\ucla\freshman\winter\cs32\projects\cracked\cracked\wordlist.cpp(70): warning C4018: '<': signed/unsigned mismatch
   Cracked.vcxproj -> C:\Gajan\School\UCLA\Freshman\Winter\CS32\Projects\Cracked\Debug\Cracked.exe

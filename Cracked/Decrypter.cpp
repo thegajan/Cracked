@@ -6,14 +6,26 @@ using namespace std;
 class DecrypterImpl
 {
 public:
+	~DecrypterImpl();
     bool load(string filename);
     vector<string> crack(const string& ciphertext);
 private:
+	WordList* m_word = nullptr;
 };
+
+DecrypterImpl::~DecrypterImpl() {
+	if (m_word != nullptr) {
+		delete m_word;
+	}
+}
 
 bool DecrypterImpl::load(string filename)
 {
-    return false;  // This compiles, but may not be correct
+	if (m_word != nullptr) {
+		delete m_word;
+	}
+	m_word = new WordList;
+	return m_word->loadWordList("wordlist.txt");
 }
 
 vector<string> DecrypterImpl::crack(const string& ciphertext)
