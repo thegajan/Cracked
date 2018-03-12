@@ -123,6 +123,7 @@
     <ClCompile Include="Tokenizer.cpp" />
     <ClCompile Include="Translator.cpp" />
     <ClCompile Include="WordList.cpp" />
+    <ClCompile Include="wordlistTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="wordlist.txt" />

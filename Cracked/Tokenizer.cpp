@@ -12,14 +12,14 @@ private:
 	vector<char> m_seperate;
 };
 
-TokenizerImpl::TokenizerImpl(string separators)
+TokenizerImpl::TokenizerImpl(string separators) //O(P)
 {
 	for (int i = 0; i < separators.size(); i++) {
 		m_seperate.push_back(separators[i]);
 	}
 }
 
-vector<string> TokenizerImpl::tokenize(const std::string& s) const
+vector<string> TokenizerImpl::tokenize(const std::string& s) const //O(SP)
 {
 	vector<string> tokenize;
 	string temp;
@@ -29,10 +29,11 @@ vector<string> TokenizerImpl::tokenize(const std::string& s) const
 			if (s[i] == m_seperate[j])
 				isPunt = true;
 		}
-		if (isPunt)
+		if (!isPunt)
 			temp = temp + s[i];
 		else {
-			tokenize.push_back(temp);
+			if(temp.length() > 0)
+				tokenize.push_back(temp);
 			temp = "";
 		}
 	}

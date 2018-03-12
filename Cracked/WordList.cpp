@@ -3,7 +3,6 @@
 #include <vector>
 #include <fstream>
 #include "MyHash.h"
-#include <algorithm>
 using namespace std;
 
 class WordListImpl
@@ -13,11 +12,12 @@ public:
 	bool contains(string word) const;
 	vector<string> findCandidates(string cipherWord, string currTranslation) const;
 private:
+	string wordPattern(const string& word) const;
 	string lower(const string& s) const;
 	bool validWord(const string& s) const;
 	bool validTranslation(const string& translation, const string& word) const;
-	string wordPattern(const string& word) const;
 	MyHash<string, vector<string>> m_table;
+	MyHash<string, string> m_wordlist;
 };
 
 string WordListImpl::lower(const string& s) const {
@@ -28,10 +28,16 @@ string WordListImpl::lower(const string& s) const {
 }
 
 string WordListImpl::wordPattern(const string& word) const{
-	string s = word;
+	string s = lower(word);
+	char rep = 'A';
 	for (int i = 0; i < s.size(); i++) {
-		char rep = 'A';
-		replace(s.begin(), s.end(), s[i], rep);
+		if (isupper(s[i]))
+			continue;
+		char original = s[i];
+		for (int j = 0; j < s.size(); j++) {
+			if (s[j] == original)
+				s[j] = rep;
+		}
 		rep++;
 	}
 	return s;
@@ -66,23 +72,25 @@ bool WordListImpl::validTranslation(const string& translation, const string& wor
 bool WordListImpl::loadWordList(string filename) //O(W)
 {
 	m_table.reset();
+	m_wordlist.reset();
 	ifstream file("wordlist.txt");
 	string word;
-	int i = 0;
-	if (!file) {
+	if (!file)
 		return false;
-	}
 	while (getline(file, word)) {
 		if (validWord(word)) {
-			string codedWord = wordPattern(word);
+			string lowerWord = lower(word);
+
+			m_wordlist.associate(lowerWord, lowerWord);
+
+			string codedWord = wordPattern(lowerWord);
 			vector<string>* codedWords = m_table.find(codedWord);
+
 			if (codedWords == nullptr)
-				m_table.associate(codedWord, vector<string>{word});
+				m_table.associate(codedWord, vector<string>{lowerWord});
 			else {
-				codedWords->push_back(word);
-				m_table.associate(codedWord, *codedWords);
+				codedWords->push_back(lowerWord);
 			}
-			//i++;
 		}
 	}
 	return true;
@@ -90,11 +98,10 @@ bool WordListImpl::loadWordList(string filename) //O(W)
 
 bool WordListImpl::contains(string word) const //O(1)
 {
-	const vector<string>* p = m_table.find(wordPattern(lower(word)));
-	for(int j = 0; j < p->size(); j++)
-		if ((*p)[j] == word)
-			return true;
-	return true;
+	const string* p = m_wordlist.find(lower(word));
+	if(p != nullptr)
+		return true;
+	return false;
 }
 
 vector<string> WordListImpl::findCandidates(string cipherWord, string currTranslation) const //O(Q)
@@ -122,6 +129,7 @@ vector<string> WordListImpl::findCandidates(string cipherWord, string currTransl
 		if (valid)
 			specificCipher.push_back(possWord_O);
 	}
+	return specificCipher;
 }
 
 //***** hash functions for string, int, and char *****
