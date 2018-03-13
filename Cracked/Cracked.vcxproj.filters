@@ -30,7 +30,10 @@
     <ClCompile Include="WordList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="translatortest.cpp">
+    <ClCompile Include="decryptertest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="p4sanity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -37,6 +37,8 @@ vector<string> TokenizerImpl::tokenize(const std::string& s) const //O(SP)
 			temp = "";
 		}
 	}
+	if(temp != "")
+		tokenize.push_back(temp);
 	return tokenize;
 }
 

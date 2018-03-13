@@ -7,25 +7,19 @@ class TranslatorImpl
 {
 public:
 	TranslatorImpl();
-	~TranslatorImpl();
-    bool pushMapping(string ciphertext, string plaintext);
-    bool popMapping();
-    string getTranslation(const string& ciphertext) const;
+	bool pushMapping(string ciphertext, string plaintext);
+	bool popMapping();
+	string getTranslation(const string& ciphertext) const;
 private:
+	string top() const { return m_stack.back(); };
 	string upper(const string& s) const;
-	char* newTable();
-	char* top() const;
+	void newTable();
 	bool validate(const string& ct, const string& pt) const;
-	vector<char*> m_stack;
+	vector<string> m_stack;
 };
 
 TranslatorImpl::TranslatorImpl() {
 	newTable();
-}
-
-TranslatorImpl::~TranslatorImpl() {
-	for (int i = 0; i < m_stack.size(); i++)
-		m_stack.pop_back();
 }
 
 string TranslatorImpl::upper(const string& s) const {
@@ -43,7 +37,7 @@ bool TranslatorImpl::validate(const string& ct, const string& pt) const {
 	for (int i = 0; i < ctLength; i++) {
 		if (!isalpha(ct[i]) || !isalpha(pt[i]))
 			return false;
-		char currMap = top()[ct[i]-65];
+		char currMap = top()[ct[i] - 65];
 		if (currMap != pt[i] && currMap != '?')
 			return false;
 		for (int j = 0; j < 26; j++) {
@@ -54,22 +48,16 @@ bool TranslatorImpl::validate(const string& ct, const string& pt) const {
 	return true;
 }
 
-char* TranslatorImpl::top() const{
-	return m_stack.back();
-}
-
-char* TranslatorImpl::newTable() {
-	char* newTable = new char[26];
-	for(int i = 0; i < 26; i++){
-		newTable[i] = '?';
-	}
+void TranslatorImpl::newTable() {
+	string s;
 	if (m_stack.size() > 0) {
-		for (int i = 0; i < 26; i++) {
-			newTable[i] = top()[i];
-		}
+		s = top();
 	}
-	m_stack.push_back(newTable);
-	return newTable;
+	else {
+		for (int i = 0; i < 26; i++)
+			s += '?';
+	}
+	m_stack.push_back(s);
 }
 
 bool TranslatorImpl::pushMapping(string ciphertext, string plaintext)
@@ -78,18 +66,20 @@ bool TranslatorImpl::pushMapping(string ciphertext, string plaintext)
 	plaintext = upper(plaintext);
 	if (!validate(ciphertext, plaintext))
 		return false;
-	char* newMap = newTable();
+	newTable();
+	string newMap = top();
 	for (int i = 0; i < ciphertext.length(); i++) {
 		if (ciphertext[i] == '\'')
 			continue;
 		newMap[ciphertext[i] - 65] = plaintext[i];
 	}
+	m_stack.back() = newMap;
 	return true;
 }
 
 bool TranslatorImpl::popMapping()
 {
-	if (m_stack.size() == 0)
+	if (m_stack.size() == 1)
 		return false;
 	m_stack.pop_back();
 	return true;
@@ -101,8 +91,8 @@ string TranslatorImpl::getTranslation(const string& ciphertext) const
 	for (int i = 0; i < ciphertext.length(); i++) {
 		if (!isalpha(ciphertext[i]))
 			mapText += ciphertext[i];
-		else 
-			if(islower(ciphertext[i]))
+		else
+			if (islower(ciphertext[i]))
 				mapText += tolower(top()[toupper(ciphertext[i]) - 65]);
 			else
 				mapText += top()[toupper(ciphertext[i]) - 65];
@@ -117,25 +107,25 @@ string TranslatorImpl::getTranslation(const string& ciphertext) const
 
 Translator::Translator()
 {
-    m_impl = new TranslatorImpl;
+	m_impl = new TranslatorImpl;
 }
 
 Translator::~Translator()
 {
-    delete m_impl;
+	delete m_impl;
 }
 
 bool Translator::pushMapping(string ciphertext, string plaintext)
 {
-    return m_impl->pushMapping(ciphertext, plaintext);
+	return m_impl->pushMapping(ciphertext, plaintext);
 }
 
 bool Translator::popMapping()
 {
-    return m_impl->popMapping();
+	return m_impl->popMapping();
 }
 
 string Translator::getTranslation(const string& ciphertext) const
 {
-    return m_impl->getTranslation(ciphertext);
+	return m_impl->getTranslation(ciphertext);
 }

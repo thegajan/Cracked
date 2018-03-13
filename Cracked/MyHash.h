@@ -85,6 +85,7 @@ template<typename KeyType, typename ValueType>
 void MyHash<KeyType, ValueType>::reset() {
 	deleteHash(m_hash, m_size);
 	m_numHash = 0;
+	m_size = 100;
 	m_hash = new Node*[m_size]();
 }
 
@@ -154,12 +155,12 @@ int MyHash<KeyType, ValueType>::getNumItems() const {
 //MyHash getLoadFactor O(1)
 template<typename KeyType, typename ValueType>
 double MyHash<KeyType, ValueType>::getLoadFactor() const {
-	return m_maxLoadFactor;
+	return (1.0*m_numHash) / m_size;
 }
 
 //MyHash bucket number 
 template<typename KeyType, typename ValueType>
 int MyHash<KeyType, ValueType>::bucketNumber(const KeyType& key) const {
-	unsigned int ::hash(const KeyType& k); //TAKEOUT :: FOR BOTH WHEN TURNING IN
-	return ::hash(key) % m_size;
+	unsigned int hasher(const KeyType& k); //TAKEOUT :: FOR BOTH WHEN TURNING IN
+	return hasher(key) % m_size;
 }

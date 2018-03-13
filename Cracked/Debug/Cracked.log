@@ -1,2 +1,3 @@
-﻿  translatortest.cpp
+﻿  decryptertest.cpp
+c:\gajan\school\ucla\freshman\winter\cs32\projects\cracked\cracked\decryptertest.cpp(20): warning C4018: '<': signed/unsigned mismatch
   Cracked.vcxproj -> C:\Gajan\School\UCLA\Freshman\Winter\CS32\Projects\Cracked\Debug\Cracked.exe

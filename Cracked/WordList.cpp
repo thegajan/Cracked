@@ -27,7 +27,7 @@ string WordListImpl::lower(const string& s) const {
 	return word;
 }
 
-string WordListImpl::wordPattern(const string& word) const{
+string WordListImpl::wordPattern(const string& word) const {
 	string s = lower(word);
 	char rep = 'A';
 	for (int i = 0; i < s.size(); i++) {
@@ -73,7 +73,7 @@ bool WordListImpl::loadWordList(string filename) //O(W)
 {
 	m_table.reset();
 	m_wordlist.reset();
-	ifstream file("wordlist.txt");
+	ifstream file(filename);
 	string word;
 	if (!file)
 		return false;
@@ -99,7 +99,7 @@ bool WordListImpl::loadWordList(string filename) //O(W)
 bool WordListImpl::contains(string word) const //O(1)
 {
 	const string* p = m_wordlist.find(lower(word));
-	if(p != nullptr)
+	if (p != nullptr)
 		return true;
 	return false;
 }
@@ -134,17 +134,17 @@ vector<string> WordListImpl::findCandidates(string cipherWord, string currTransl
 
 //***** hash functions for string, int, and char *****
 
-unsigned int hash(const std::string& s)
+unsigned int hasher(const std::string& s)
 {
 	return std::hash<std::string>()(s);
 }
 
-unsigned int hash(const int& i)
+unsigned int hasher(const int& i)
 {
 	return std::hash<int>()(i);
 }
 
-unsigned int hash(const char& c)
+unsigned int hasher(const char& c)
 {
 	return std::hash<char>()(c);
 }
