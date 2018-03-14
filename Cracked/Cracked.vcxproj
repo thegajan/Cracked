@@ -121,7 +121,6 @@
     <ClCompile Include="Decrypter.cpp" />
     <ClCompile Include="decryptertest.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="p4sanity.cpp" />
     <ClCompile Include="Tokenizer.cpp" />
     <ClCompile Include="Translator.cpp" />
     <ClCompile Include="WordList.cpp" />

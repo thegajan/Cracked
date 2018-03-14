@@ -112,19 +112,20 @@ vector<string> WordListImpl::findCandidates(string cipherWord, string currTransl
 	string cipherPattern = wordPattern(cipherWord);
 	const vector<string>* possibleCipher = m_table.find(cipherPattern);
 
-	vector<string> specificCipher;
+	if (possibleCipher == nullptr)
+		return vector<string>();	
 
+	vector<string> specificCipher;
 	for (int i = 0; i < possibleCipher->size(); i++) {
 		string possWord_O = (*possibleCipher)[i];
 		string possWord = lower((*possibleCipher)[i]);
 		bool valid = true;
 		for (int j = 0; j < possWord.length(); j++) {
-			if (isalpha(currTranslation[j]) && possWord[j] != currTranslation[j])
+			if (isalpha(currTranslation[j]) && possWord[j] != currTranslation[j] || currTranslation[j] == '?' && !isalpha(possWord[j]) || currTranslation[j] == '\'' && possWord[j] != '\'')
+			{
 				valid = false;
-			else if (currTranslation[j] == '?' && !isalpha(possWord[j]))
-				valid = false;
-			else if (currTranslation[j] == '\'' && possWord[j] != '\'')
-				valid = false;
+				break;
+			}
 		}
 		if (valid)
 			specificCipher.push_back(possWord_O);
@@ -134,17 +135,17 @@ vector<string> WordListImpl::findCandidates(string cipherWord, string currTransl
 
 //***** hash functions for string, int, and char *****
 
-unsigned int hasher(const std::string& s)
+unsigned int hash(const std::string& s)
 {
 	return std::hash<std::string>()(s);
 }
 
-unsigned int hasher(const int& i)
+unsigned int hash(const int& i)
 {
 	return std::hash<int>()(i);
 }
 
-unsigned int hasher(const char& c)
+unsigned int hash(const char& c)
 {
 	return std::hash<char>()(c);
 }

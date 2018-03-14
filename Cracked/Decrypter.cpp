@@ -12,7 +12,7 @@ public:
 private:
 	int transStatus(const vector<string>& s) const;
 	int numUnkown(const string& s) const;
-	string chosen(const vector<string>& tokenList) const;
+	int chosen(const vector<string>& tokenList) const;
 	void recCrack(string cipher_message, vector<string>& output);
 	WordList m_word;
 	Translator m_translation;
@@ -25,23 +25,23 @@ DecrypterImpl::DecrypterImpl()
 
 bool DecrypterImpl::load(string filename) //O(W)
 {
-	return m_word.loadWordList("wordlist.txt");
+	return m_word.loadWordList(filename);
 }
 
 int DecrypterImpl::numUnkown(const string& s) const {
 	int num = 0;
-	string translation = m_translation.getTranslation(s);
 	for (int i = 0; i < s.length(); i++)
-		if (translation[i] == '?')
+		if (s[i] == '?')
 			num++;
 	return num;
 }
 
-string DecrypterImpl::chosen(const vector<string>& tokenList) const{
-	string chosen = tokenList[0];
+int DecrypterImpl::chosen(const vector<string>& tokenList) const{
+	//string chosen = tokenList[0];
+	int chosen = 0;
 	for (int i = 1; i < tokenList.size(); i++) {
-		if (numUnkown(chosen) < numUnkown(tokenList[i]))
-			chosen = tokenList[i];
+		if (numUnkown(tokenList[chosen]) < numUnkown(tokenList[i]))
+			chosen = i;
 	}
 	return chosen;
 }
@@ -56,9 +56,13 @@ int DecrypterImpl::transStatus(const vector<string>& s) const {
 }
 
 void DecrypterImpl::recCrack(string cipher_message, vector<string>& output) {
+	string translation = m_translation.getTranslation(cipher_message);
+	vector<string> tokenizeTranslations = m_token.tokenize(translation);
 	vector<string> tokenized = m_token.tokenize(cipher_message);
-	string chosenToken = chosen(tokenized);
-	string chosenTranslation = m_translation.getTranslation(chosenToken);
+
+	int chosenTokenPos = chosen(tokenizeTranslations); //NOT CHOSING THE RIGHT CHOSEN //translate then choose
+	string chosenToken = tokenized[chosenTokenPos];
+	string chosenTranslation = tokenizeTranslations[chosenTokenPos];
 	vector<string> matches = m_word.findCandidates(chosenToken, chosenTranslation);
 	if (matches.empty())
 		return;
@@ -70,17 +74,26 @@ void DecrypterImpl::recCrack(string cipher_message, vector<string>& output) {
 		}
 		int status = transStatus(tempTranslation);
 		if (status == 0) {
+			//cout << m_translation.getTranslation(cipher_message) << endl;
+
+
 			m_translation.popMapping();
 		}
 		else if (status == tempTranslation.size()) {
+			//cout << m_translation.getTranslation(cipher_message) << endl;
+
+
 			output.push_back(m_translation.getTranslation(cipher_message));
 			m_translation.popMapping();
 		}
-		else
-			recCrack(cipher_message, output);
+		else {
+			//cout << m_translation.getTranslation(cipher_message) << endl;
+
+
+			recCrack(cipher_message, output); 
+		}
 	}
 	m_translation.popMapping();
-	return;
 }
 
 vector<string> DecrypterImpl::crack(const string& ciphertext)
