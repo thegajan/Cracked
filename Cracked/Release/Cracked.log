@@ -1,11 +1,8 @@
-﻿  Decrypter.cpp
-Decrypter.cpp(33): warning C4018: '<': signed/unsigned mismatch
-Decrypter.cpp(41): warning C4018: '<': signed/unsigned mismatch
-Decrypter.cpp(60): warning C4018: '<': signed/unsigned mismatch
-Decrypter.cpp(71): warning C4018: '<': signed/unsigned mismatch
+﻿  decryptertest.cpp
+decryptertest.cpp(22): warning C4018: '<': signed/unsigned mismatch
   Generating code
-  9 of 470 functions ( 1.9%) were compiled, the rest were copied from previous compilation.
+  1 of 447 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    9 functions had inline decision re-evaluated but remain unchanged
+    0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Cracked.vcxproj -> C:\Gajan\School\UCLA\Freshman\Winter\CS32\Projects\Cracked\Release\Cracked.exe

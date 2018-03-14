@@ -106,9 +106,10 @@ bool WordListImpl::contains(string word) const //O(1)
 
 vector<string> WordListImpl::findCandidates(string cipherWord, string currTranslation) const //O(Q)
 {
-	if (!validWord(cipherWord) || !validTranslation(currTranslation, cipherWord))
-		return vector<string>();
-
+	//if (!validWord(cipherWord) || !validTranslation(currTranslation, cipherWord))
+	//	return vector<string>();
+	cipherWord = lower(cipherWord);
+	currTranslation = lower(currTranslation);
 	string cipherPattern = wordPattern(cipherWord);
 	const vector<string>* possibleCipher = m_table.find(cipherPattern);
 

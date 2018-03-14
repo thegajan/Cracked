@@ -1,6 +1,7 @@
 #include "provided.h"
 #include <string>
 #include <vector>
+//#include <iostream>
 using namespace std;
 
 class DecrypterImpl
@@ -39,7 +40,7 @@ int DecrypterImpl::numUnkown(const string& s) const {
 string DecrypterImpl::chosen(const vector<string>& tokenList) const{
 	string chosen = tokenList[0];
 	for (int i = 0; i < tokenList.size(); i++) {
-		if (numUnkown(m_translation.getTranslation(chosen)) <= numUnkown(m_translation.getTranslation(tokenList[i])))
+		if (numUnkown(m_translation.getTranslation(chosen)) < numUnkown(m_translation.getTranslation(tokenList[i])))
 			chosen = tokenList[i];
 	}
 	return chosen;
@@ -50,7 +51,16 @@ void DecrypterImpl::recCrack(string cipher_message, vector<string>& output) {
 	string chosenCipherWord = chosen(tokenCipher);
 	string chosenCipherWordTranslation = m_translation.getTranslation(chosenCipherWord);
 
+	//cout << "CHECKING FOR:" << chosenCipherWord << "---->" << "TRANSLATION" << chosenCipherWordTranslation << endl;	
+	//cout << m_translation.getTranslation(cipher_message) << endl;
+
 	vector<string> cipherWordMatches = m_word.findCandidates(chosenCipherWord, chosenCipherWordTranslation);
+
+	//if (chosenCipherWordTranslation == "Mar?") {
+	//	cout << "~Matches~" << endl;
+	//	for (int i = 0; i < cipherWordMatches.size(); i++)
+	//		cout << cipherWordMatches[i] << endl;
+	//}
 
 	if (cipherWordMatches.empty()){
 		m_translation.popMapping();
@@ -61,13 +71,14 @@ void DecrypterImpl::recCrack(string cipher_message, vector<string>& output) {
 
 		bool push = m_translation.pushMapping(chosenCipherWord, cipherWordMatches[i]);
 		if (!push) {
+			//cout << "PUSH FAIL" << cipherWordMatches[i] << endl;
 			continue;
 		}
 
 		vector<string> translatedtokenCipher = m_token.tokenize(m_translation.getTranslation(cipher_message));
 
 		int complete = 0;
-		int incorrect = 0;
+		int incorrect = 0;			
 		for (int j = 0; j < translatedtokenCipher.size(); j++) {
 			if (numUnkown(translatedtokenCipher[j]) == 0 && !m_word.contains(translatedtokenCipher[j]))
 				incorrect++;
@@ -76,6 +87,7 @@ void DecrypterImpl::recCrack(string cipher_message, vector<string>& output) {
 		}
 
 		if (incorrect > 0 || complete == 0) {
+			//cout << "FAILED:" << cipherWordMatches[i] << endl;
 			m_translation.popMapping();
 			continue;
 		}
