@@ -161,6 +161,6 @@ double MyHash<KeyType, ValueType>::getLoadFactor() const {
 //MyHash bucket number 
 template<typename KeyType, typename ValueType>
 int MyHash<KeyType, ValueType>::bucketNumber(const KeyType& key) const {
-	unsigned int ::hash(const KeyType& k);
-	return ::hash(key) % m_size;
+	unsigned int hash(const KeyType& k);
+	return hash(key) % m_size;
 }

@@ -93,6 +93,8 @@ void DecrypterImpl::recCrack(string cipher_message, vector<string>& output) {
 }
 
 void DecrypterImpl::qSort(vector<string>& vec, int left, int right) {
+	if (vec.empty())
+		return;
 	int leftVal = left;
 	int rightVal = right;
 	string temp;
