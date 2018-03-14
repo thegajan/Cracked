@@ -14,7 +14,7 @@ private:
 	string top() const { return m_stack.back(); };
 	string upper(const string& s) const;
 	void newTable();
-	bool validate(const string& ct, const string& pt) const;
+	bool validate(string ct, string pt) const;
 	vector<string> m_stack;
 };
 
@@ -29,9 +29,11 @@ string TranslatorImpl::upper(const string& s) const {
 	return word;
 }
 
-bool TranslatorImpl::validate(const string& ct, const string& pt) const {
+bool TranslatorImpl::validate(string ct, string pt) const {
 	int ctLength = ct.length();
 	int ptLength = pt.length();
+	ct = upper(ct);
+	pt = upper(pt);
 	if (ctLength != ptLength)
 		return false;
 	for (int i = 0; i < ctLength; i++) {
@@ -41,7 +43,7 @@ bool TranslatorImpl::validate(const string& ct, const string& pt) const {
 		if (currMap != pt[i] && currMap != '?')
 			return false;
 		for (int j = 0; j < 26; j++) {
-			if (top()[j] == pt[i] && top()[j] != ct[i])
+			if (top()[j] == pt[i] && j != ct[i] - 65)
 				return false;
 		}
 	}

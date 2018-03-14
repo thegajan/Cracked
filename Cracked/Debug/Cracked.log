@@ -1,3 +1,13 @@
 ﻿  decryptertest.cpp
-c:\gajan\school\ucla\freshman\winter\cs32\projects\cracked\cracked\decryptertest.cpp(20): warning C4018: '<': signed/unsigned mismatch
+c:\gajan\school\ucla\freshman\winter\cs32\projects\cracked\cracked\decryptertest.cpp(22): warning C4018: '<': signed/unsigned mismatch
+  Translator.cpp
+c:\gajan\school\ucla\freshman\winter\cs32\projects\cracked\cracked\translator.cpp(73): warning C4018: '<': signed/unsigned mismatch
+c:\gajan\school\ucla\freshman\winter\cs32\projects\cracked\cracked\translator.cpp(93): warning C4018: '<': signed/unsigned mismatch
+  Decrypter.cpp
+c:\gajan\school\ucla\freshman\winter\cs32\projects\cracked\cracked\decrypter.cpp(33): warning C4018: '<': signed/unsigned mismatch
+c:\gajan\school\ucla\freshman\winter\cs32\projects\cracked\cracked\decrypter.cpp(41): warning C4018: '<': signed/unsigned mismatch
+c:\gajan\school\ucla\freshman\winter\cs32\projects\cracked\cracked\decrypter.cpp(59): warning C4018: '<': signed/unsigned mismatch
+c:\gajan\school\ucla\freshman\winter\cs32\projects\cracked\cracked\decrypter.cpp(76): warning C4018: '<': signed/unsigned mismatch
+c:\gajan\school\ucla\freshman\winter\cs32\projects\cracked\cracked\decrypter.cpp(87): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
   Cracked.vcxproj -> C:\Gajan\School\UCLA\Freshman\Winter\CS32\Projects\Cracked\Debug\Cracked.exe
