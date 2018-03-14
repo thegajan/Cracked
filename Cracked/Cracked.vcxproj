@@ -119,6 +119,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Decrypter.cpp" />
+    <ClCompile Include="decryptertest.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Tokenizer.cpp" />
     <ClCompile Include="Translator.cpp" />

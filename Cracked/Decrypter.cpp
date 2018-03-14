@@ -10,6 +10,7 @@ public:
 	bool load(string filename);
 	vector<string> crack(const string& ciphertext);
 private:
+	void qSort(vector<string>& vec, int left, int right);
 	int numUnkown(const string& s) const;
 	string chosen(const vector<string>& tokenList) const;
 	void recCrack(string cipher_message, vector<string>& output);
@@ -91,10 +92,38 @@ void DecrypterImpl::recCrack(string cipher_message, vector<string>& output) {
 	return;
 }
 
+void DecrypterImpl::qSort(vector<string>& vec, int left, int right) {
+	int leftVal = left;
+	int rightVal = right;
+	string temp;
+	string pivot = vec[(left + right) / 2];
+
+	while (leftVal <= rightVal) {
+		while (vec[leftVal] < pivot)
+			leftVal++;
+		while (vec[rightVal] > pivot)
+			rightVal--;
+
+		if (leftVal <= rightVal) {
+			temp = vec[leftVal];
+			vec[leftVal] = vec[rightVal];
+			vec[rightVal] = temp;
+			leftVal++;
+			rightVal--;
+		}
+	}
+
+	if (left < rightVal)
+		qSort(vec, left, rightVal);
+	if (leftVal < right)
+		qSort(vec, leftVal, right);
+}
+
 vector<string> DecrypterImpl::crack(const string& ciphertext)
 {
 	vector<string> output;
 	recCrack(ciphertext, output);
+	qSort(output, 0, output.size() - 1);
 	return output; 
 }
 
